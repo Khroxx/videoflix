@@ -47,3 +47,24 @@ def convert1080p(source):
         target
     ]
     subprocess.run(cmd)
+    
+    
+def exportJson():
+    shell = [
+        'python', 'manage.py', 'shell'
+    ]
+    imp = [
+        'from', 'core.admin', 'import', 'VideoResource'
+    ]
+    data = [
+        'dataset', '=', 'VideoResource().export()'
+    ]
+    action = [
+        'print(dataset.json)'
+        'dataset.json', '>', 'exportJson.txt'
+    ]
+    subprocess.run(shell)
+    subprocess.run(imp)
+    subprocess.run(data)
+    subprocess.run(action)
+    
