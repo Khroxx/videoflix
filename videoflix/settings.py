@@ -28,7 +28,16 @@ SECRET_KEY = 'django-insecure-=^x0=z(h0e=6lbg!n#nlt0s1$##cx0*c%vb_pg)kk&)9m-$-)1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1'
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+CACHE_TTL = 60 * 15
 
 
 # Application definition
@@ -40,13 +49,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'content',
+    # 'content',
+    'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'content.apps.ContentConfig',
+    'debug_toolbar',
+    'django_rq',
 
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -75,6 +89,20 @@ TEMPLATES = [
     },
 ]
 
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        # 'USERNAME': 'khrox',
+        # 'PASSWORD': 'foobared',
+        'DEFAULT_TIMEOUT': 360,
+        'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
+            # 'ssl_cert_reqs': None,
+        },
+    },
+}
+
 WSGI_APPLICATION = 'videoflix.wsgi.application'
 
 
@@ -85,6 +113,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CACHES = {
+    "default": {        
+        "BACKEND": "django_redis.cache.RedisCache",        
+        "LOCATION": "redis://127.0.0.1:6379/1",        
+        "OPTIONS": {            
+            "PASSWORD": 'foobared',
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"        
+        },        
+        "KEY_PREFIX": "videoflix"    
     }
 }
 
