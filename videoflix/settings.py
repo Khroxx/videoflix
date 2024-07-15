@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    # 'content',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -122,6 +121,11 @@ DATABASES = {
         'PASSWORD': 'rkjpk123',
         'HOST': 'localhost',
         'PORT': '',
+        'TEST': {
+            'NAME': 'testdb',
+            # 'USER': 'testuser',
+            # 'PASSWORD': 'testpw'
+        }
     }
 }
 
