@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 from content.views import VideoView
-from users.views import CustomUserView, RegisterUserView, LoginView, LogoutView
+from users.views import *
 
 
 def redirect_to_admin(request):
@@ -16,10 +16,14 @@ urlpatterns = [
     path('videos/', VideoView.as_view()),
     path('__debug__/', include('debug_toolbar.urls')),
     path('django-rq/', include('django_rq.urls')),
-    path('register/', RegisterUserView.as_view(), name='register'),
+    path('user/', include('django.contrib.auth.urls')),
+    path('user/register/', RegisterUserView.as_view(), name='register'),
+    path('activate/<str:uidb64>/<str:token>/', activate_user, name="activate"),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('users/', CustomUserView.as_view()),
     path('users/<int:pk>/', CustomUserView.as_view(), name='user-update'),
     path('users/<int:pk>/delete/', CustomUserView.as_view(), name='delete_user'),
+    # path('verification/', include('verify_email.urls')),	
+    
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

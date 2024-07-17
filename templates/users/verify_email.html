@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete your registration</title>
+    <style>
+        body {
+            font-family: Roboto, sans-serif;
+            background-color: #070e27;
+            color: #ffffff;
+            max-width: 100%;
+            max-height: 100vh;
+            margin: 0 auto;
+            padding: 64px;
+            border: none;
+            overflow: hidden;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 50px;
+        }
+        .message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="logo">
+            VIDEOFLIX
+        </div>
+        <p class="message">Dear {{ user.username }},</p>
+        <p class="message">Thank you for registering with VIDEOFLIX. To complete your registration and verify your email address, please click the link below:</p>
+        <p class="message"><a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" style="color: #ffffff; text-decoration: underline;">Activate your account</a></p>
+        <p class="message">If you did not create an account with us, please disregard this email.</p>
+        <p class="message">Best regards,<br>Your VIDEOFLIX Team</p>
+    </div>
+</body>
+</html>

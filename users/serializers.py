@@ -7,11 +7,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = CustomUser
-        fields = ('id', 'email', 'username', 'password')
+        fields = ('email', 'username', 'password')
         
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
             username=validated_data['username'],
+            is_active=False
         )
         return user

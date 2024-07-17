@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from django.http import HttpResponseRedirect
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -57,6 +61,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_rq',
     'import_export',
+    # 'django_registration'
+    # 'verify_email.apps.VerifyEmailConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +82,7 @@ ROOT_URLCONF = 'videoflix.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,6 +115,9 @@ WSGI_APPLICATION = 'videoflix.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+DB_USER = os.environ.get("DB_USER")
+DB_PASS = os.environ.get("DB_PASS")
+
 DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
@@ -117,8 +126,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoflix',
-        'USER': 'bari',
-        'PASSWORD': 'rkjpk123',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
         'HOST': 'localhost',
         'PORT': '',
         'TEST': {
@@ -191,5 +200,25 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
+
+# Email verification settings 
+
+mail = os.environ.get("MAIL")
+mail_pass = os.environ.get("PASSWORD")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = mail
+EMAIL_HOST_PASSWORD = mail_pass
+
+DEFAULT_FROM_EMAIL = mail
+# 'Videoflix<info@videoflix.com>'
+VERIFY_EMAIL_TOKEN_EXPIRE_TIME = 60  # 60 Minuten gültig
+LOGIN_REDIRECT_URL = HttpResponseRedirect('http://localhost:4200/')
