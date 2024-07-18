@@ -6,9 +6,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import  AllowAny
 from rest_framework import status, generics
 from django.contrib.auth import login, logout, authenticate, get_user_model
+from email.mime.image import MIMEImage
+from videoflix.settings import MEDIA_URL
 from .models import CustomUser
 from .serializers import CustomUserSerializer
 from .forms import RegistrationForm
+import os
+from django.utils.html import strip_tags
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -18,9 +23,46 @@ from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.http import HttpResponseRedirect
-
+from django.utils.html import mark_safe
 # Create your views here.
 
+
+# Funktion zum Senden der Aktivierungs-E-Mail
+def send_activation_email(user, request):
+    current_site = get_current_site(request)
+    mail_subject = "Confirm your email"
+    logo_path = os.path.join(settings.BASE_DIR, 'templates', 'users', 'logo.png')
+    logo_cid = 'logo_cid'
+    message = render_to_string("users/verify_email.html", {
+        "user": user,
+        "domain": current_site.domain,
+        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+        "token": account_activation_token.make_token(user),
+        'logo_cid': logo_cid
+    })
+    to_email = user.email
+    email = EmailMultiAlternatives(subject=mail_subject, body="", to=[to_email])
+    email.attach_alternative(mark_safe(message), "text/html")
+    with open(logo_path, 'rb') as img:
+        mime_image = MIMEImage(img.read())
+        mime_image.add_header('Content-ID', f'<{logo_cid}>')
+        mime_image.add_header('Content-Disposition', 'inline')
+        email.attach(mime_image)
+    email.send()
+    
+    
+def reset_password(user, request):
+    current_site = get_current_site(request)
+    mail_subject = "Reset your Password"
+    logo_path = os.path.join(settings.BASE_DIR, 'templates', 'users', 'logo.png')
+    logo_cid = 'logo_cid'
+    message = render_to_string("users/verify_email.html", {
+        "domain": current_site.domain,
+        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+        "token": account_activation_token.make_token(user),
+        'logo_cid': logo_cid
+    })
+    pass
 
 class CustomUserView(APIView):
     permission_classes = [AllowAny] 
@@ -71,60 +113,18 @@ class RegisterUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save(is_active=False)
-            # Send activation email
-            current_site = get_current_site(request)
-            mail_subject = "Confirm your email"
-            message = render_to_string("users/verify_email.html", {
-                "user": user,
-                "domain": current_site.domain,
-                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": account_activation_token.make_token(user)
-            })
-            
-            # to_email = serializer.validated_data.get("email")
-            to_email = user.email
-            email = EmailMultiAlternatives(subject=mail_subject, body="", to=[to_email])
-            # email.content_subtype = "html"
-            email.attach_alternative(message, "text/html")
-            email.send()
-            return Response({"poggers": "es ging?"})  # Oder eine andere URL
+            send_activation_email(user, request)
+            return Response({'message': 'Registration successful. Activation email sent.'})  # Oder eine andere URL
              # return HttpResponseRedirect('http://localhost:4200/')  # Oder eine andere URL
         else:
-            return HttpResponseRedirect('http://localhost:4200/register')  # Oder eine andere URL bei Fehler
-    
-    # def register_user(request):
-    #     form = RegistrationForm()
-    #     if request.method == "POST":
-    #         form = RegistrationForm(request.POST)
-    #         if form.is_vaid():
-    #             user = form.save(commit=False)
-    #             user.is_active = False
-    #             user.save()
-            
-    #             current_site = get_current_site(request)
-    #             mail_subject = "Confirm your email"
-    #             message = render_to_string("users/verify_email.html",{
-    #                 "user": user,
-    #                 "domain": current_site.domain,
-    #                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-    #                 "token": account_activation_token.make_token(user)
-    #             })
-    #             to_email = form.cleaned_data.get("email")
-    #             email = EmailMessage(
-    #                 mail_subject, message, to=[to_email]
-    #             )
-    #             email.send()
-    #             messages.success(request, "Please check your email to complete the registration.")
-    #             # return HttpResponseRedirect('angular seite wenn sie online ist')
-    #             return HttpResponseRedirect('http://localhost:4200/') # angular login?
-    #     # return render(request, "register.html", {"form": form})
-    #     return HttpResponseRedirect('http://localhost:4200/register')
-    #     # return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/register')
+            return Response({'message': 'could not send an email'})
+            # return HttpResponseRedirect('http://localhost:4200/register')  # Oder eine andere URL bei Fehler
+
                             
     
 
 def activate_user(request, uidb64, token):
-        CustomUser = get_user_model()
+        # CustomUser = get_user_model()
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = CustomUser.objects.get(pk=uid)

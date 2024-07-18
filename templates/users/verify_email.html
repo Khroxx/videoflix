@@ -7,14 +7,17 @@
     <style>
         body {
             font-family: Roboto, sans-serif;
-            background-color: #070e27;
-            color: #ffffff;
             max-width: 100%;
             max-height: 100vh;
             margin: 0 auto;
             padding: 64px;
             border: none;
             overflow: hidden;
+
+        }
+        .mail{
+            display: flex;
+            flex-direction: column;
         }
         .logo {
             text-align: center;
@@ -24,18 +27,42 @@
         .message {
             font-size: 16px;
             line-height: 1.6;
-            color: #ffffff;
+        }
+        .messagelink{
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .activate {
+            border-radius: 40px;
+            padding: 12px 24px;
+            cursor: pointer;
+            gap: 10px;
+            background-color: #2E3EDF;
+            color: white;
+        }
+        a{
+            text-decoration: none;
+            color: #2E3EDF;
+            cursor: pointer;
+        }
+        img{
+            height: 40px;
         }
     </style>
 </head>
 <body>
-    <div>
+    <div class="mail">
         <div class="logo">
-            VIDEOFLIX
+            <img src="cid:logo_cid" alt="VIDEOFLIX">
         </div>
         <p class="message">Dear {{ user.username }},</p>
-        <p class="message">Thank you for registering with VIDEOFLIX. To complete your registration and verify your email address, please click the link below:</p>
-        <p class="message"><a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" style="color: #ffffff; text-decoration: underline;">Activate your account</a></p>
+        <p class="message">Thank you for registering with <a href="https://bari-sopa.com/projects/videoflix">VIDEOFLIX</a>. To complete your registration and verify your email address, please click the link below:</p>
+        <div class="messagelink">
+            <a class="activate" href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}">Activate your account</a>
+        </div>
         <p class="message">If you did not create an account with us, please disregard this email.</p>
         <p class="message">Best regards,<br>Your VIDEOFLIX Team</p>
     </div>

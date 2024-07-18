@@ -17,6 +17,8 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
     path('django-rq/', include('django_rq.urls')),
     path('user/', include('django.contrib.auth.urls')),
+    path('user/verify/', send_activation_email, name='verify_email'),
+    path('user/reset-password/<str:uidb64>/<str:token>/', reset_password, name='reset_password'),
     path('user/register/', RegisterUserView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>/', activate_user, name="activate"),
     path('login/', LoginView.as_view(), name='login'),
@@ -24,6 +26,5 @@ urlpatterns = [
     path('users/', CustomUserView.as_view()),
     path('users/<int:pk>/', CustomUserView.as_view(), name='user-update'),
     path('users/<int:pk>/delete/', CustomUserView.as_view(), name='delete_user'),
-    # path('verification/', include('verify_email.urls')),	
     
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
