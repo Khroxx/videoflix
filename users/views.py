@@ -1,25 +1,21 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from httplib2 import BasicAuthentication
+from django.shortcuts import get_object_or_404
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.permissions import  AllowAny
 from rest_framework import status, generics
-from django.contrib.auth import login, logout, authenticate, get_user_model
+from django.contrib.auth import login, logout
 from email.mime.image import MIMEImage
 from videoflix.settings import MEDIA_URL
 from .models import CustomUser
 from .serializers import CustomUserSerializer
-from .forms import RegistrationForm
 import os
-from django.utils.html import strip_tags
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib import messages
 from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.http import HttpResponseRedirect
@@ -99,9 +95,9 @@ class LoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = CustomUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
         
-        user = CustomUser.objects.get(username=username)
+        user = CustomUser.objects.get(email=email)
         if user is not None:
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
