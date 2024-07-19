@@ -27,7 +27,7 @@ from django.utils.html import mark_safe
 # Create your views here.
 
 
-# Funktion zum Senden der Aktivierungs-E-Mail
+# Sends Email to activate user
 def send_activation_email(user, request):
     current_site = get_current_site(request)
     mail_subject = "Confirm your email"
@@ -50,19 +50,28 @@ def send_activation_email(user, request):
         email.attach(mime_image)
     email.send()
     
-    
+
+# Sends Email to requesting user to reset password
 def reset_password(user, request):
     current_site = get_current_site(request)
     mail_subject = "Reset your Password"
     logo_path = os.path.join(settings.BASE_DIR, 'templates', 'users', 'logo.png')
     logo_cid = 'logo_cid'
-    message = render_to_string("users/verify_email.html", {
+    message = render_to_string("users/reset_password.html", {
         "domain": current_site.domain,
         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
         "token": account_activation_token.make_token(user),
         'logo_cid': logo_cid
     })
-    pass
+    to_email = user.email
+    email = EmailMultiAlternatives(subject=mail_subject, body="", to=[to_email])
+    email.attach_alternative(mark_safe(message), "text/html")
+    with open(logo_path, 'rb') as img:
+        mime_image = MIMEImage(img.read())
+        mime_image.add_header('Content-ID', f'<{logo_cid}>')
+        mime_image.add_header('Content-Disposition', 'inline')
+        email.attach(mime_image)
+    email.send()
 
 class CustomUserView(APIView):
     permission_classes = [AllowAny] 
@@ -115,12 +124,23 @@ class RegisterUserView(generics.CreateAPIView):
             user = serializer.save(is_active=False)
             send_activation_email(user, request)
             return Response({'message': 'Registration successful. Activation email sent.'})  # Oder eine andere URL
-             # return HttpResponseRedirect('http://localhost:4200/')  # Oder eine andere URL
         else:
             return Response({'message': 'could not send an email'})
-            # return HttpResponseRedirect('http://localhost:4200/register')  # Oder eine andere URL bei Fehler
 
-                            
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        if email:
+            try:
+                user = CustomUser.objects.get(email=email)
+                reset_password(user, request)
+                return Response({'message': 'Reset email sent.'})  # Oder eine andere URL
+            except CustomUser.DoesNotExist:
+                return Response({'message': 'User not found.'})
+        else:
+            return Response({'message': 'could not send an email'})
     
 
 def activate_user(request, uidb64, token):
