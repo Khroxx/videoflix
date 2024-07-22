@@ -4,11 +4,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.permissions import  AllowAny
 from rest_framework import status, generics
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 from django.contrib.auth import login, logout
 from email.mime.image import MIMEImage
 from videoflix.settings import MEDIA_URL
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, ResetEmailSerializer
 import os
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -18,8 +19,9 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.html import mark_safe
+from django.middleware.csrf import get_token
 # Create your views here.
 
 
@@ -48,16 +50,19 @@ def send_activation_email(user, request):
     
 
 # Sends Email to requesting user to reset password
-def reset_password(user, request):
+def reset_password(email, request):
     current_site = get_current_site(request)
     mail_subject = "Reset your Password"
     logo_path = os.path.join(settings.BASE_DIR, 'templates', 'users', 'logo.png')
     logo_cid = 'logo_cid'
+    csrf_token = get_csrf_token(request)
+    user = CustomUser.objects.get(email=email)
     message = render_to_string("users/reset_password.html", {
         "domain": current_site.domain,
         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
         "token": account_activation_token.make_token(user),
-        'logo_cid': logo_cid
+        'logo_cid': logo_cid,
+        'csrf_token': csrf_token
     })
     to_email = user.email
     email = EmailMultiAlternatives(subject=mail_subject, body="", to=[to_email])
@@ -68,6 +73,22 @@ def reset_password(user, request):
         mime_image.add_header('Content-Disposition', 'inline')
         email.attach(mime_image)
     email.send()
+    # dauert a weng
+
+class SendResetEmailView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = ResetEmailSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            try:
+                reset_password(email, request)
+                return Response({"success": "E-Mail zum Zurücksetzen des Passworts gesendet."}, status=HTTP_200_OK)
+            except CustomUser.DoesNotExist:
+                return Response({"error": "Benutzer mit dieser E-Mail-Adresse existiert nicht."}, status=HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class CustomUserView(APIView):
     permission_classes = [AllowAny] 
@@ -166,3 +187,8 @@ class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         logout(request)
         return Response(status=204) 
+    
+    
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return JsonResponse({'csrf_token': csrf_token})
