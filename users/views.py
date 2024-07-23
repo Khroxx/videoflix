@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import  AllowAny
 from rest_framework import status, generics
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from email.mime.image import MIMEImage
 from videoflix.settings import MEDIA_URL
 from .models import CustomUser
@@ -58,9 +58,9 @@ def reset_password(email, request):
     csrf_token = get_csrf_token(request)
     user = CustomUser.objects.get(email=email)
     message = render_to_string("users/reset_password.html", {
-        "domain": current_site.domain,
+        # "domain": current_site.domain,
         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-        "token": account_activation_token.make_token(user),
+        # "token": account_activation_token.make_token(user),
         'logo_cid': logo_cid,
         'csrf_token': csrf_token
     })
@@ -73,7 +73,7 @@ def reset_password(email, request):
         mime_image.add_header('Content-Disposition', 'inline')
         email.attach(mime_image)
     email.send()
-    # dauert a weng
+    # dauert manchmal etwas lange
 
 class SendResetEmailView(generics.CreateAPIView):
     permission_classes = [AllowAny]
@@ -98,16 +98,20 @@ class CustomUserView(APIView):
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
     
-    def put(self, request, pk, format=None):
-        user = get_object_or_404(CustomUser, pk=pk)
+    def put(self, request, uidb64, format=None):
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        print(uid)
+        user = get_object_or_404(CustomUser, pk=uid)
         serializer = CustomUserSerializer(user, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user.set_password(serializer.validated_data["password"])
+            user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request, pk, format=None):
-        user = get_object_or_404(CustomUser, pk=pk)
+    def delete(self, request, uidb64, format=None):
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_object_or_404(CustomUser, pk=uid)
         user.delete()
         return Response({"message": "erfolgreich gelöscht"})
     
@@ -117,8 +121,10 @@ class LoginView(ObtainAuthToken):
         serializer = CustomUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
-        
-        user = CustomUser.objects.get(email=email)
+        password = serializer.validated_data['password']
+        username = serializer.validated_data['email'].split('@')[0]
+        user = authenticate(request, username=username,  password=password)
+        # user = CustomUser.objects.get(email=email)
         if user is not None:
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
@@ -152,7 +158,7 @@ class ResetPasswordView(APIView):
         if email:
             try:
                 user = CustomUser.objects.get(email=email)
-                reset_password(user, request)
+                # reset_password(user, request)
                 return Response({'message': 'Reset email sent.'})  # Oder eine andere URL
             except CustomUser.DoesNotExist:
                 return Response({'message': 'User not found.'})

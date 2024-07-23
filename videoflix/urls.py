@@ -18,7 +18,7 @@ urlpatterns = [
     path('django-rq/', include('django_rq.urls')),
     path('user/', include('django.contrib.auth.urls')),
     path('user/verify/', send_activation_email, name='verify_email'),
-    path('user/reset-password/<str:uidb64>/<str:token>/', ResetPasswordView.as_view(), name='reset_password'),
+    # path('user/reset_password/<str:uidb64>/<str:token>/', ResetPasswordView.as_view(), name='reset_password'),
     path('send_reset_email/', SendResetEmailView.as_view(), name='reset_email'),
     path('get-csrf-token/', get_csrf_token, name="csrf_token"),
     # path('user/send-reset-password/<str:uidb64>/<str:token>/', confirm_reset_password, name='confirm_reset'),
@@ -27,7 +27,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('users/', CustomUserView.as_view()),
-    path('users/<int:pk>/', CustomUserView.as_view(), name='user-update'),
-    path('users/<int:pk>/delete/', CustomUserView.as_view(), name='delete_user'),
+    path('users/<str:uidb64>/', CustomUserView.as_view(), name='user-update'),
+    path('users/<str:uidb64>/delete/', CustomUserView.as_view(), name='delete_user'),
     
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
