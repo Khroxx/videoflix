@@ -3,5 +3,5 @@ from .models import Video
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
-        model: Video
+        model = Video
         fields = '__all__'

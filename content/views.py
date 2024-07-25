@@ -18,6 +18,7 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 class VideoView(APIView):
     #authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny] # Keine Authentifizierung erforderlich
+    # serializer_class = VideoSerializer
 
     def get(self, request, format=None):
         videos = Video.objects.all()

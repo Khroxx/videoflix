@@ -1,7 +1,6 @@
 asgiref==3.8.1
 async-timeout==4.0.3
 click==8.1.7
-deptry==0.17.0
 diff-match-patch==20230430
 Django==5.0.7
 django-cors-headers==4.4.0

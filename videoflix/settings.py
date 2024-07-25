@@ -68,8 +68,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_rq',
     'import_export',
-    # 'django_registration'
-    # 'verify_email.apps.VerifyEmailConfig',
 ]
 
 MIDDLEWARE = [
@@ -108,7 +106,7 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
         # 'USERNAME': 'khrox',
-        # 'PASSWORD': 'foobared',
+        'PASSWORD': 'foobared',
         'DEFAULT_TIMEOUT': 360,
         'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
             # 'ssl_cert_reqs': None,
