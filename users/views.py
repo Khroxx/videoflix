@@ -126,7 +126,7 @@ class LoginView(ObtainAuthToken):
         user = authenticate(request, username=username,  password=password)
         # user = CustomUser.objects.get(email=email)
         if user is not None:
-            login(request, user)
+            # login(request, user) // this logs in on admin interface
             token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'token': token.key,
@@ -180,10 +180,10 @@ def activate_user(request, uidb64, token):
             login(request, user)
             messages.success(request, "Your account has been successfully activated!")
             # return HttpResponseRedirect('angular seite wenn sie online ist')
-            return HttpResponseRedirect('http://localhost:4200/')# angular eingeloggt zu videos oder so
+            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
         else:
             messages.error(request, "Activation link is invalid or expired")
-            return HttpResponseRedirect('http://localhost:4200/login')
+            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')
             
             
 
