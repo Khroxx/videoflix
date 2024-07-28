@@ -27,7 +27,7 @@ DB_PASS = databaseuserpassword
 3. create database
 3.1 open terminal and enter postgres
 ```bash 
-sudo su postgres
+    sudo su postgres
 psql
 ```
 3.2 copy and paste
@@ -42,12 +42,21 @@ GRANT ALL PRIVILEGES ON DATABASE videoflix TO bari;
 ```
 then hit Ctrl+D to exit
 
-4.  
+4. install nginx
+
+```bash
+sudo apt-get install nginx
+sudo service nginx start
+```
 
 
 # INSTALLATION
 
 1. Run the install script
 
+2. create admin
+```bash
+python manage.py createsuperuser
+```
 
 # 

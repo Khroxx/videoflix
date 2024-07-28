@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'content'
     'users',
     'corsheaders',
     'rest_framework',
@@ -124,10 +125,6 @@ DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 
 DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'videoflix',
@@ -137,8 +134,6 @@ DATABASES = {
         'PORT': '',
         'TEST': {
             'NAME': 'testdb',
-            # 'USER': 'testuser',
-            # 'PASSWORD': 'testpw'
         }
     }
 }
