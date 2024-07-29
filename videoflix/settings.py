@@ -34,17 +34,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    'api.bari-sopa.com',
+    'bari.sopa.com',    
 ]
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:8000",
-    "https://bari.sopa.com",
+    "http://localhost:4200", # development frontend
+    "http://127.0.0.1:8000", # development backend
+    "https://bari.sopa.com", # production frontend
+    "https://api.bari-sopa.com", # production backend
     
 ]
 
@@ -54,15 +58,15 @@ CACHE_TTL = 60 * 15
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'content'
     'users',
-    'corsheaders',
+    #'content',
     'rest_framework',
     'rest_framework.authtoken',
     'content.apps.ContentConfig',
@@ -130,8 +134,9 @@ DATABASES = {
         'NAME': 'videoflix',
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': 'api.bari-sopa.com',
+        #'HOST': 'localhost',
+        'PORT': '5432',
         'TEST': {
             'NAME': 'testdb',
         }

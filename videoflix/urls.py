@@ -11,7 +11,7 @@ def redirect_to_admin(request):
     return redirect('/admin/')
 
 urlpatterns = [
-    # path('', redirect_to_admin),
+    path('', redirect_to_admin),
     path('admin/', admin.site.urls),
     path('videos/', VideoView.as_view()),
     path('__debug__/', include('debug_toolbar.urls')),

@@ -107,7 +107,7 @@ class CustomUserView(APIView):
             user.set_password(serializer.validated_data["password"])
             user.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
     
     def delete(self, request, uidb64, format=None):
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -179,10 +179,11 @@ def activate_user(request, uidb64, token):
             
             login(request, user)
             messages.success(request, "Your account has been successfully activated!")
-            # return HttpResponseRedirect('angular seite wenn sie online ist')
+            # return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=true')
             return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
         else:
             messages.error(request, "Activation link is invalid or expired")
+            # return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=false')
             return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')
             
             
