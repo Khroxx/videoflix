@@ -1,4 +1,4 @@
-from content.tasks import convert1080p, convert480p, convert720p
+from content.tasks import *
 from .models import Video
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
@@ -8,13 +8,17 @@ import django_rq
 
 @receiver(post_save, sender=Video)
 def video_post_save(sender, instance, created, **kwargs):
+    """
+    Sends variables to tasks.py to format through RQ Worker
+    """
     print('video gespeichert')
     if created:
         print('new video created')
         queue = django_rq.get_queue('default', autocommit=True)
-        queue.enqueue(convert480p, instance.video_file.path)
-        queue.enqueue(convert720p, instance.video_file.path)
-        queue.enqueue(convert1080p, instance.video_file.path)
+        # queue.enqueue(process_video, instance.video_file.path, instance.id)
+        queue.enqueue(convert480p, instance.video_file.path, instance.id)
+        queue.enqueue(convert720p, instance.video_file.path, instance.id)
+        queue.enqueue(convert1080p, instance.video_file.path, instance.id)
 
 
 

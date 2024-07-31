@@ -11,6 +11,7 @@ class VideoResource(resources.ModelResource):
 
 @admin.register(Video)
 class VideoAdmin(ImportExportModelAdmin):
+    # resource_class = VideoResource
     pass
 
 

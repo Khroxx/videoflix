@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'api.bari-sopa.com',
-    'bari.sopa.com',    
+    'bari.sopa.com',        
 ]
 
 INTERNAL_IPS = [
@@ -66,10 +66,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'content.apps.ContentConfig',
     #'content',
     'rest_framework',
     'rest_framework.authtoken',
-    'content.apps.ContentConfig',
     'debug_toolbar',
     'django_rq',
     'import_export',
@@ -110,7 +110,7 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
-        # 'USERNAME': 'khrox',
+        'USERNAME': 'default',
         'PASSWORD': 'foobared',
         'DEFAULT_TIMEOUT': 360,
         'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
@@ -131,12 +131,13 @@ DB_PASS = os.environ.get("DB_PASS")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'videoflix',
+        'NAME': 'videoflix2',
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
-        'HOST': 'api.bari-sopa.com',
-        #'HOST': 'localhost',
-        'PORT': '5432',
+        # 'HOST': 'api.bari-sopa.com',
+        'HOST': 'localhost',
+        # 'PORT': '5432',
+        'PORT': '',
         'TEST': {
             'NAME': 'testdb',
         }
@@ -148,7 +149,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",        
         "LOCATION": "redis://127.0.0.1:6379/1",        
         "OPTIONS": {            
-            "PASSWORD": 'foobared',
+            # "PASSWORD": 'foobared',
             "CLIENT_CLASS": "django_redis.client.DefaultClient"        
         },        
         "KEY_PREFIX": "videoflix"    

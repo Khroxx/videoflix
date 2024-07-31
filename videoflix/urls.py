@@ -30,4 +30,8 @@ urlpatterns = [
     path('users/<str:uidb64>/', CustomUserView.as_view(), name='user-update'),
     path('users/<str:uidb64>/delete/', CustomUserView.as_view(), name='delete_user'),
     
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+]
+
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
