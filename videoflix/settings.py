@@ -112,7 +112,7 @@ RQ_QUEUES = {
         'DB': 0,
         'USERNAME': 'default',
         'PASSWORD': 'foobared',
-        'DEFAULT_TIMEOUT': 360,
+        'DEFAULT_TIMEOUT': 720,
         'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
             # 'ssl_cert_reqs': None,
         },
@@ -155,6 +155,7 @@ CACHES = {
         "KEY_PREFIX": "videoflix"    
     }
 }
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
 
 # Password validation

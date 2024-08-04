@@ -100,11 +100,10 @@ class CustomUserView(APIView):
     
     def put(self, request, uidb64, format=None):
         uid = force_str(urlsafe_base64_decode(uidb64))
-        print(uid)
         user = get_object_or_404(CustomUser, pk=uid)
-        serializer = CustomUserSerializer(user, data=request.data)
+        serializer = CustomUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
-            user.set_password(serializer.validated_data["password"])
+            user.set_password(serializer.validated_data.get("password"))
             user.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  

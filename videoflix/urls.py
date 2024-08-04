@@ -14,6 +14,7 @@ urlpatterns = [
     path('', redirect_to_admin),
     path('admin/', admin.site.urls),
     path('videos/', VideoView.as_view()),
+    path('videos/<int:pk>/', VideoView.as_view()),
     path('__debug__/', include('debug_toolbar.urls')),
     path('django-rq/', include('django_rq.urls')),
     path('user/', include('django.contrib.auth.urls')),
