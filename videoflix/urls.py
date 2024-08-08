@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
-from content.views import VideoView
+from content.views import *
 from users.views import *
 
 
@@ -15,6 +15,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('videos/', VideoView.as_view()),
     path('videos/<int:pk>/', VideoView.as_view()),
+    path('videos/<int:pk>/file/<str:quality>/', VideoFileView.as_view(), name='video-file'),
     path('__debug__/', include('debug_toolbar.urls')),
     path('django-rq/', include('django_rq.urls')),
     path('user/', include('django.contrib.auth.urls')),
@@ -33,6 +34,6 @@ urlpatterns = [
     
 ]
 
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

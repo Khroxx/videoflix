@@ -1,7 +1,6 @@
 import os
 import subprocess
 from django.conf import settings
-from django_rq import job
 from content.models import Video
 
 
@@ -53,7 +52,7 @@ def convert720p(source, video_id):
 
 def convert1080p(source, video_id):
     """
-    Converts source file to 100p and saves file in corresponding folder and deletes original source file
+    Converts source file to 1080p and saves file in corresponding folder and deletes original source file
     """
     base_name = os.path.join(settings.MEDIA_ROOT, '1080p', os.path.basename(source).rsplit('.', 1)[0])
     target = f"{base_name}_1080p.mp4"
@@ -64,10 +63,10 @@ def convert1080p(source, video_id):
         '-c:v', 'libx264',
         '-crf', '23',
         '-c:a', 'aac',
-        '-strict', '-2',
+        '-strict', '-2', 
         target
     ]
-    subprocess.run(cmd)
+    subprocess.run(cmd, check=True)
     
     video = Video.objects.get(id=video_id)
     video.video_1080p.name = os.path.relpath(target, settings.MEDIA_ROOT)

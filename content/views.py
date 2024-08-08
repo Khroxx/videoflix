@@ -1,3 +1,4 @@
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 from rest_framework.permissions import  AllowAny
@@ -31,4 +32,22 @@ class VideoView(APIView):
             videos = Video.objects.all()
             serializer = VideoSerializer(videos, many=True)
             return Response(serializer.data)
-        
+
+class VideoFileView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk, quality, format=None):
+        video = get_object_or_404(Video, pk=pk)
+        video_file = None
+
+        if quality == '480p':
+            video_file = video.video_480p
+        elif quality == '720p':
+            video_file = video.video_720p
+        elif quality == '1080p':
+            video_file = video.video_1080p
+
+        if not video_file:
+            raise Http404("Video file not found")
+
+        return FileResponse(video_file.open(), content_type='video/mp4')
