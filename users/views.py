@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework.authtoken.views import ObtainAuthToken, APIView
 from rest_framework.authtoken.models import Token
@@ -22,6 +23,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.http import HttpResponseRedirect, JsonResponse
 from django.utils.html import mark_safe
 from django.middleware.csrf import get_token
+
 # Create your views here.
 
 
@@ -48,8 +50,26 @@ def send_activation_email(user, request):
         email.attach(mime_image)
     email.send()
     
+    
+class ResendActivationEmailView(APIView):
+    permission_classes = [AllowAny]
 
-# Sends Email to requesting user to reset password
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        if email:
+            try:
+                user = CustomUser.objects.get(email=email)
+                if not user.is_active:
+                    send_activation_email(user, request)
+                    return Response({'message': 'Activation email resent.'}, status=200)
+                else:
+                    return Response({'message': 'User is already active.'}, status=200)
+            except CustomUser.DoesNotExist:
+                return Response({'message': 'User not found.'}, status=404)
+        else:
+            return Response({'message': 'Email not provided.'}, status=400)
+        
+        
 def reset_password(email, request):
     current_site = get_current_site(request)
     mail_subject = "Reset your Password"
@@ -58,9 +78,7 @@ def reset_password(email, request):
     csrf_token = get_csrf_token(request)
     user = CustomUser.objects.get(email=email)
     message = render_to_string("users/reset_password.html", {
-        # "domain": current_site.domain,
         "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-        # "token": account_activation_token.make_token(user),
         'logo_cid': logo_cid,
         'csrf_token': csrf_token
     })
@@ -73,7 +91,7 @@ def reset_password(email, request):
         mime_image.add_header('Content-Disposition', 'inline')
         email.attach(mime_image)
     email.send()
-    # dauert manchmal etwas lange
+
 
 class SendResetEmailView(generics.CreateAPIView):
     permission_classes = [AllowAny]
@@ -89,6 +107,7 @@ class SendResetEmailView(generics.CreateAPIView):
             except CustomUser.DoesNotExist:
                 return Response({"error": "Benutzer mit dieser E-Mail-Adresse existiert nicht."}, status=HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
 
 class CustomUserView(APIView):
     permission_classes = [AllowAny] 
@@ -123,9 +142,7 @@ class LoginView(ObtainAuthToken):
         password = serializer.validated_data['password']
         username = serializer.validated_data['email'].split('@')[0]
         user = authenticate(request, username=username,  password=password)
-        # user = CustomUser.objects.get(email=email)
         if user is not None:
-            # login(request, user) // this logs in on admin interface
             token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'token': token.key,
@@ -135,6 +152,7 @@ class LoginView(ObtainAuthToken):
             })
         else:
             return Response({"error": "Falsche Anmeldedaten"}, status=400)
+    
     
 class RegisterUserView(generics.CreateAPIView):
     serializer_class = CustomUserSerializer
@@ -149,6 +167,7 @@ class RegisterUserView(generics.CreateAPIView):
         else:
             return Response({'message': 'could not send an email'})
 
+
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
     
@@ -157,7 +176,6 @@ class ResetPasswordView(APIView):
         if email:
             try:
                 user = CustomUser.objects.get(email=email)
-                # reset_password(user, request)
                 return Response({'message': 'Reset email sent.'})  # Oder eine andere URL
             except CustomUser.DoesNotExist:
                 return Response({'message': 'User not found.'})
@@ -166,7 +184,6 @@ class ResetPasswordView(APIView):
     
 
 def activate_user(request, uidb64, token):
-        # CustomUser = get_user_model()
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = CustomUser.objects.get(pk=uid)
@@ -178,18 +195,17 @@ def activate_user(request, uidb64, token):
             
             login(request, user)
             messages.success(request, "Your account has been successfully activated!")
-            # return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=true')
-            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
+            return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=true')
+            # return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
         else:
             messages.error(request, "Activation link is invalid or expired")
-            # return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=false')
-            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')
-            
-            
+            return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=false')
+            # return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')            
 
 
         
 class LogoutView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         logout(request)
         return Response(status=204) 

@@ -11,14 +11,9 @@ def video_post_save(sender, instance, created, **kwargs):
     """
     Sends variables to tasks.py to format through RQ Worker
     """
-    print('video gespeichert')
     if created:
-        print('new video created')
         queue = django_rq.get_queue('default', autocommit=True)
-        # queue.enqueue(process_video, instance.video_file.path, instance.id)
-        queue.enqueue(convert480p, instance.video_file.path, instance.id)
-        queue.enqueue(convert720p, instance.video_file.path, instance.id)
-        queue.enqueue(convert1080p, instance.video_file.path, instance.id)
+        queue.enqueue(convert_to_hls, instance.video_file.path, instance.id)
 
 
 

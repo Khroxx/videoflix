@@ -36,7 +36,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'api.bari-sopa.com',
-    'bari.sopa.com',        
+    'bari.sopa.com', 
+    'testserver'       
 ]
 
 INTERNAL_IPS = [
@@ -48,9 +49,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200", # development frontend
     "http://127.0.0.1:8000", # development backend
     "https://bari.sopa.com", # production frontend
-    "https://api.bari-sopa.com", # production backend
-    
+    "https://api.bari-sopa.com", # production backend    
 ]
+       
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrf-token',
+]            
 
 CACHE_TTL = 60 * 15
 
@@ -72,8 +78,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'debug_toolbar',
     'django_rq',
-    'import_export',
-]
+    'import_export']
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -230,3 +235,4 @@ DEFAULT_FROM_EMAIL = 'Videoflix<'+mail+'>'
 # 'Videoflix<info@videoflix.com>'
 # VERIFY_EMAIL_TOKEN_EXPIRE_TIME = 60  # 60 Minuten gültig
 LOGIN_REDIRECT_URL = HttpResponseRedirect('http://localhost:4200/')
+
