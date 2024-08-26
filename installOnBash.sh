@@ -1,4 +1,4 @@
-# LINUX
+# LINUX and MAC
 #!/bin/bash
 
 # Wechseln in das Projekt
@@ -13,17 +13,15 @@ source env/bin/activate
 # install requirements
 pip install -r requirements.txt
 
-# make migrations
+# database migrations
 python manage.py makemigrations
-
-# migrate
 python manage.py migrate
 
 # create docs
-cd docs/
-make html
+# cd docs/
+# make html
 
-echo "Installation compelete. Starting Server now"
+echo "Installation complete. Starting Server now"
 
 # start server
 python manage.py runserver

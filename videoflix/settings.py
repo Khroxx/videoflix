@@ -32,11 +32,14 @@ SECRET_KEY = 'django-insecure-=^x0=z(h0e=6lbg!n#nlt0s1$##cx0*c%vb_pg)kk&)9m-$-)1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+backend_address = os.environ.get("backend_address")
+domain_address = os.environ.get("domain_address")
+
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'api.bari-sopa.com',
-    'bari.sopa.com', 
+    backend_address,
+    domain_address, # rausnehmen nach beendigung
     'testserver'       
 ]
 
@@ -48,8 +51,8 @@ INTERNAL_IPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200", # development frontend
     "http://127.0.0.1:8000", # development backend
-    "https://bari.sopa.com", # production frontend
-    "https://api.bari-sopa.com", # production backend    
+    "https://" + domain_address, # production frontend
+    "https://" + backend_address, # production backend    
 ]
        
 CORS_ALLOW_HEADERS = [
@@ -73,12 +76,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'content.apps.ContentConfig',
-    #'content',
     'rest_framework',
     'rest_framework.authtoken',
     'debug_toolbar',
     'django_rq',
-    'import_export']
+    'import_export'
+    ]
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -118,8 +121,7 @@ RQ_QUEUES = {
         'USERNAME': 'default',
         'PASSWORD': 'foobared',
         'DEFAULT_TIMEOUT': 720,
-        'REDIS_CLIENT_KWARGS': {    # Eventual additional Redis connection arguments
-            # 'ssl_cert_reqs': None,
+        'REDIS_CLIENT_KWARGS': { 
         },
     },
 }
@@ -139,9 +141,7 @@ DATABASES = {
         'NAME': 'videoflix2',
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
-        # 'HOST': 'api.bari-sopa.com',
         'HOST': 'localhost',
-        # 'PORT': '5432',
         'PORT': '',
         'TEST': {
             'NAME': 'testdb',
@@ -154,7 +154,6 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",        
         "LOCATION": "redis://127.0.0.1:6379/1",        
         "OPTIONS": {            
-            # "PASSWORD": 'foobared',
             "CLIENT_CLASS": "django_redis.client.DefaultClient"        
         },        
         "KEY_PREFIX": "videoflix"    
@@ -225,14 +224,13 @@ mail_pass = os.environ.get("PASSWORD")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-mail.outlook.com'
-# EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = mail
 EMAIL_HOST_PASSWORD = mail_pass
 
 DEFAULT_FROM_EMAIL = 'Videoflix<'+mail+'>'
-# 'Videoflix<info@videoflix.com>'
 # VERIFY_EMAIL_TOKEN_EXPIRE_TIME = 60  # 60 Minuten gültig
 LOGIN_REDIRECT_URL = HttpResponseRedirect('http://localhost:4200/')
+# LOGIN_REDIRECT_URL = HttpResponseRedirect('https://' + domain_address + '/projects/videoflix/login')
 
