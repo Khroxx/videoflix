@@ -38,10 +38,8 @@ class VideoViewTests(TestCase):
         print("get all videos Test passed")
         
     def test_convert_to_hls(self):
-        # Call the convert_to_hls function
         convert_to_hls(self.video_file_path, self.video.id)
         
-        # Verify that the HLS playlist and segments are created
         hls_dir = os.path.join(settings.MEDIA_ROOT, 'hls')
         hls_test_video = os.path.join(hls_dir, 'test_video')
         print(f"Checking if HLS directory exists at: {hls_test_video}")

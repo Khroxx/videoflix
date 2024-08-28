@@ -32,14 +32,10 @@ SECRET_KEY = 'django-insecure-=^x0=z(h0e=6lbg!n#nlt0s1$##cx0*c%vb_pg)kk&)9m-$-)1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-backend_address = os.environ.get("backend_address")
-domain_address = os.environ.get("domain_address")
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    backend_address,
-    domain_address, # rausnehmen nach beendigung
     'testserver'       
 ]
 
@@ -49,10 +45,8 @@ INTERNAL_IPS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200", # development frontend
-    "http://127.0.0.1:8000", # development backend
-    "https://" + domain_address, # production frontend
-    "https://" + backend_address, # production backend    
+    "http://localhost:4200", 
+    "http://127.0.0.1:8000", 
 ]
        
 CORS_ALLOW_HEADERS = [
@@ -231,6 +225,7 @@ EMAIL_HOST_PASSWORD = mail_pass
 
 DEFAULT_FROM_EMAIL = 'Videoflix<'+mail+'>'
 # VERIFY_EMAIL_TOKEN_EXPIRE_TIME = 60  # 60 Minuten gültig
+
+# Set URL to domain if production
 LOGIN_REDIRECT_URL = HttpResponseRedirect('http://localhost:4200/')
-# LOGIN_REDIRECT_URL = HttpResponseRedirect('https://' + domain_address + '/projects/videoflix/login')
 

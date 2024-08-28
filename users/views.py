@@ -27,7 +27,6 @@ from django.middleware.csrf import get_token
 # Create your views here.
 
 
-# Sends Email to activate user
 def send_activation_email(user, request):
     current_site = get_current_site(request)
     mail_subject = "Confirm your email"
@@ -176,7 +175,7 @@ class ResetPasswordView(APIView):
         if email:
             try:
                 user = CustomUser.objects.get(email=email)
-                return Response({'message': 'Reset email sent.'})  # Oder eine andere URL
+                return Response({'message': 'Reset email sent.'})
             except CustomUser.DoesNotExist:
                 return Response({'message': 'User not found.'})
         else:
@@ -195,12 +194,10 @@ def activate_user(request, uidb64, token):
             
             login(request, user)
             messages.success(request, "Your account has been successfully activated!")
-            return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=true')
-            # return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
+            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=true')# angular eingeloggt zu videos oder so
         else:
             messages.error(request, "Activation link is invalid or expired")
-            return HttpResponseRedirect('https://bari-sopa.com/projects/videoflix/welcome/login?activated=false')
-            # return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')            
+            return HttpResponseRedirect('http://localhost:4200/welcome/login?activated=false')            
 
 
         

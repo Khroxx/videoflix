@@ -17,7 +17,6 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 @method_decorator(csrf_protect, name='dispatch')
 class VideoView(APIView):
-    # authentication_classes = [BasicAuthentication]
     permission_classes = [AllowAny]
     serializer_class = VideoSerializer          
     queryset = Video.objects.all()
@@ -37,7 +36,3 @@ class VideoView(APIView):
         # Dummy POST method
         return Response({"message": "POST request received"})
         
-        
-# def get_csrf_token(request):
-#     csrf_token = get_token(request)
-#     return JsonResponse({'csrf_token': csrf_token})

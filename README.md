@@ -1,7 +1,8 @@
 # Videoflix
 ## Description
 This is a backend for my Videoflix (Netflix clone) frontend consisting of:<br>
-User registration, activation, login, logout, password resetting. <br>#
+User registration, activation, login, logout, password resetting. <br>
+PostgreSQL is used for Database and RQWorker for background tasks.
 After logging in you can watch any movie via VideoJS that has been uploaded and converted to HLS format <br>
 Quick reminder: Emails sometimes take a few seconds 
 
@@ -74,6 +75,11 @@ python manage.py createsuperuser
 
 
 ## TESTS
+
+0. activate RQWorker before testing:
+```bash
+python manage.py rqworker default
+```
 
 1. run a summary of all tests using pytest:
 ```bash
