@@ -103,4 +103,6 @@ pytest --cov
 
 ## Quick Info
 Started: 14.07.24 <br>
-Finished: .08.24
+Finished: TBF <br>
+<br><br>
+If you want to use this in production, add the domain allowed hosts, cors allowed origins
