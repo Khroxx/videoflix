@@ -132,7 +132,7 @@ DB_PASS = os.environ.get("DB_PASS")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'videoflix2',
+        'NAME': 'videoflix',
         'USER': DB_USER,
         'PASSWORD': DB_PASS,
         'HOST': 'localhost',

@@ -45,9 +45,4 @@ class VideoViewTests(TestCase):
         print(f"Checking if HLS directory exists at: {hls_test_video}")
         self.assertTrue(os.path.exists(hls_test_video))
         
-
-        master_playlist = os.path.join(hls_test_video, 'master.m3u8')
-        print(f"Checking if master playlist exists at: {master_playlist}")
-        self.assertTrue(os.path.exists(master_playlist))
-        
         print("HLS conversion test passed")

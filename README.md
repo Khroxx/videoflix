@@ -25,26 +25,25 @@ git clone https://github.com/Khroxx/videoflix.git
 
 2. create environment for credentials
 ```bash 
+cd videoflix/
 touch .env
 ```
 
 3. add variables for email and postgresql in /.env 
 ```bash
+#email and password
 MAIL = yourworkingemail@outlook.com
 PASSWORD = passwordtoemail
 
+#postgres admin credentials
 DB_USER = username
 DB_PASS = userpassword
-
-backend_address = your.back-address.com
-domain_address = your-domain.com
 ```
 
 4. create postgresql database
 - open terminal and enter postgres
 ```bash 
-sudo su postgres
-psql
+sudo -u postgres psql
 ```
 - copy then change username and password and paste
 ```bash
@@ -53,6 +52,7 @@ CREATE USER username WITH PASSWORD 'userpassword';
 ALTER ROLE username SET client_encoding TO 'utf8'; 
 ALTER ROLE username SET default_transaction_isolation TO 'read committed';
 ALTER ROLE username SET timezone TO 'UTC';
+ALTER ROLE username WITH CREATEDB;
 GRANT ALL PRIVILEGES ON DATABASE videoflix TO username;
 GRANT ALL ON SCHEMA public TO username;
 \q
@@ -68,7 +68,7 @@ installOnWindows.bat
 
 - The install script will create the virtual environment, activate it, install all requirements, makes migrations and migrates them and then starts the local server
 
-2. create admin
+2. open new terminal (make sure you are in env mode) and create admin
 ```bash
 python manage.py createsuperuser
 ```
