@@ -28,12 +28,13 @@ git clone https://github.com/Khroxx/videoflix.git
 cd videoflix/
 touch .env
 ```
+the .env has to be in videoflix/videoflix/.env !!
 
 3. add variables for email and postgresql in /.env 
 ```bash
 #email and password
-MAIL = yourworkingemail@outlook.com
-PASSWORD = passwordtoemail
+MAIL = 'yourworkingemail@outlook.com'
+PASSWORD = 'passwordtoemail'
 
 #postgres admin credentials
 DB_USER = username
@@ -62,9 +63,17 @@ then hit Ctrl+D to exit
 
 ## INSTALLATION
 
-1. Run the install script depending on OS:
-installOnBash.sh
+1. Run the install script depending on OS in your terminal: <br>
+installOnBash.sh: <br>
+```bash
+chmod -x installOnBash.sh
+./installOnBash.sh
+```
+
+installOnWindows.bat: <br>
+```bash
 installOnWindows.bat
+```
 
 - The install script will create the virtual environment, activate it, install all requirements, makes migrations and migrates them and then starts the local server
 
@@ -81,7 +90,7 @@ python manage.py createsuperuser
 python manage.py rqworker default
 ```
 
-1. run a summary of all tests using pytest:
+1. open another terminal in env and run a summary of all tests using pytest:
 ```bash
 pytest -s
 ```
