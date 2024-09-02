@@ -223,7 +223,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = mail
 EMAIL_HOST_PASSWORD = mail_pass
 
-DEFAULT_FROM_EMAIL = 'Videoflix<' + mail + '>'
+DEFAULT_FROM_EMAIL = 'Videoflix<' + mail  + '>'
 # VERIFY_EMAIL_TOKEN_EXPIRE_TIME = 60  # 60 Minuten gültig
 
 # Set URL to domain if production
