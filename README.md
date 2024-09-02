@@ -66,7 +66,7 @@ then hit Ctrl+D to exit
 1. Run the install script depending on OS in your terminal: <br>
 installOnBash.sh: <br>
 ```bash
-chmod -x installOnBash.sh
+chmod +x installOnBash.sh
 ./installOnBash.sh
 ```
 
